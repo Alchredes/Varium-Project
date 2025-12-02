@@ -1,0 +1,1859 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Varium Project</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-dark: #121212;
+            --bg-card: #1e1e1e;
+            --bg-hover: #2a2a2a;
+            --primary: #7c3aed;
+            --primary-light: #8b5cf6;
+            --secondary: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --text-primary: #f9fafb;
+            --text-secondary: #d1d5db;
+            --border-color: #374151;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-primary);
+            line-height: 1.5;
+            min-height: 100vh;
+            padding: 0;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            margin-bottom: 30px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo i {
+            font-size: 28px;
+            color: var(--primary);
+        }
+
+        .logo h1 {
+            font-size: 24px;
+            font-weight: 700;
+            background: linear-gradient(to right, var(--primary), var(--primary-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .theme-toggle {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 20px;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 50%;
+            transition: all 0.3s;
+        }
+
+        .theme-toggle:hover {
+            background-color: var(--bg-hover);
+            color: var(--text-primary);
+        }
+
+        /* Main Layout */
+        .dashboard {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        @media (max-width: 1024px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Card Styling */
+        .card {
+            background-color: var(--bg-card);
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+            transition: transform 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .card-title {
+            font-size: 20px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-title i {
+            color: var(--primary);
+        }
+
+        /* Schedule Section */
+        .schedule-container {
+            grid-column: span 1;
+        }
+
+        .schedule-switcher {
+            display: flex;
+            background-color: var(--bg-dark);
+            border-radius: 8px;
+            padding: 4px;
+            width: fit-content;
+            margin-bottom: 20px;
+        }
+
+        .schedule-btn {
+            padding: 8px 16px;
+            border-radius: 6px;
+            border: none;
+            background: none;
+            color: var(--text-secondary);
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .schedule-btn.active {
+            background-color: var(--primary);
+            color: var(--text-primary);
+        }
+
+        .schedule-display {
+            height: 400px;
+            overflow-y: auto;
+        }
+
+        /* Week View */
+        .week-view {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 10px;
+            height: 100%;
+        }
+
+        .day-column {
+            background-color: var(--bg-hover);
+            border-radius: 8px;
+            padding: 12px;
+            min-height: 350px;
+        }
+
+        .day-header {
+            text-align: center;
+            font-weight: 600;
+            margin-bottom: 10px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .day-today {
+            color: var(--primary);
+        }
+
+        /* Event Items */
+        .event-item {
+            background-color: var(--primary-light);
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            font-size: 14px;
+            color: white;
+            cursor: pointer;
+            transition: transform 0.2s;
+            position: relative;
+        }
+
+        .event-item:hover {
+            transform: translateY(-2px);
+        }
+
+        .event-delete-btn {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: rgba(0, 0, 0, 0.3);
+            border: none;
+            color: white;
+            cursor: pointer;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .event-item:hover .event-delete-btn {
+            opacity: 1;
+        }
+
+        /* Month View */
+        .month-view {
+            display: none;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 8px;
+            height: 100%;
+        }
+
+        .month-cell {
+            background-color: var(--bg-hover);
+            border-radius: 8px;
+            padding: 12px;
+            min-height: 80px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .month-cell-header {
+            font-weight: 600;
+            margin-bottom: 5px;
+            text-align: center;
+        }
+
+        .month-cell-today {
+            background-color: rgba(124, 58, 237, 0.2);
+            border: 1px solid var(--primary);
+        }
+
+        .month-event {
+            background-color: var(--secondary);
+            font-size: 11px;
+            padding: 3px 6px;
+            border-radius: 4px;
+            margin-top: 3px;
+            color: white;
+            cursor: pointer;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .month-event-delete {
+            display: none;
+            position: absolute;
+            background: var(--danger);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 16px;
+            height: 16px;
+            font-size: 10px;
+            cursor: pointer;
+            top: 2px;
+            right: 2px;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .month-event:hover .month-event-delete {
+            display: flex;
+        }
+
+        /* Notes Section */
+        .notes-container {
+            grid-column: span 1;
+        }
+
+        .notes-controls {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .note-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 10px 16px;
+            border-radius: 8px;
+            border: none;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: var(--text-primary);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-light);
+        }
+
+        .btn-secondary {
+            background-color: var(--bg-hover);
+            color: var(--text-primary);
+        }
+
+        .btn-secondary:hover {
+            background-color: #333;
+        }
+
+        .notes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+
+        @media (max-width: 768px) {
+            .notes-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .note {
+            background-color: var(--bg-hover);
+            border-radius: 10px;
+            padding: 18px;
+            position: relative;
+            border-left: 4px solid var(--primary);
+        }
+
+        .note-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+
+        .note-title {
+            font-weight: 600;
+            font-size: 18px;
+        }
+
+        .note-link-dropdown {
+            position: relative;
+        }
+
+        .link-btn {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            min-width: 200px;
+            z-index: 10;
+            padding: 10px;
+            box-shadow: var(--shadow);
+        }
+
+        .note-link-dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        .dropdown-item {
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .dropdown-item:hover {
+            background-color: var(--bg-hover);
+        }
+
+        .note-content {
+            color: var(--text-secondary);
+            font-size: 15px;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .note-color-selector {
+            display: flex;
+            gap: 8px;
+            margin-top: 15px;
+        }
+
+        .color-option {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+
+        .color-option.active {
+            border-color: white;
+        }
+
+        /* Assignments Section */
+        .assignments-container {
+            grid-column: span 2;
+        }
+
+        @media (max-width: 1024px) {
+            .assignments-container {
+                grid-column: span 1;
+            }
+        }
+
+        .assignments-list {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .assignment-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px;
+            background-color: var(--bg-hover);
+            border-radius: 10px;
+            margin-bottom: 12px;
+            border-left: 4px solid var(--warning);
+        }
+
+        .assignment-item.urgent {
+            border-left-color: var(--danger);
+        }
+
+        .assignment-item.completed {
+            opacity: 0.7;
+            border-left-color: var(--secondary);
+        }
+
+        .assignment-info h4 {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .assignment-info p {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .assignment-due {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--warning);
+            font-weight: 500;
+        }
+
+        .assignment-due.urgent {
+            color: var(--danger);
+        }
+
+        .assignment-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .action-btn {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 6px;
+            transition: all 0.3s;
+        }
+
+        .action-btn:hover {
+            background-color: var(--bg-card);
+            color: var(--text-primary);
+        }
+                /* Add New Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: var(--bg-card);
+            border-radius: 12px;
+            padding: 30px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: var(--shadow);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-title {
+            font-size: 22px;
+            font-weight: 600;
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            background-color: var(--bg-hover);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
+        }
+
+        textarea.form-control {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 30px 0;
+            margin-top: 30px;
+            border-top: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-dark);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+
+        /* Event Type Colors */
+        .event-class { background-color: #7c3aed !important; }
+        .event-lab { background-color: #10b981 !important; }
+        .event-study { background-color: #3b82f6 !important; }
+        .event-exam { background-color: #ef4444 !important; }
+        .event-meeting { background-color: #f59e0b !important; }
+        .event-other { background-color: #8b5cf6 !important; }
+
+        /* Drop Zone */
+        .drop-zone {
+            text-align: center;
+            padding: 10px;
+            margin-top: 10px;
+            border: 1px dashed var(--border-color);
+            border-radius: 6px;
+            cursor: pointer;
+            color: var(--text-secondary);
+            transition: all 0.3s;
+        }
+
+        .drop-zone:hover {
+            background-color: rgba(124, 58, 237, 0.1);
+            border-color: var(--primary);
+        }
+
+        /* Notification */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 12px 20px;
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+            z-index: 1000;
+            animation: slideIn 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .notification.success {
+            background-color: var(--secondary);
+            color: white;
+        }
+
+        .notification.error {
+            background-color: var(--danger);
+            color: white;
+        }
+
+        .notification.info {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        @keyframes slideOut {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(100%); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header>
+            <div class="logo">
+                <i class="fas fa-graduation-cap"></i>
+                <h1>Varium Project</h1>
+            </div>
+            <button class="theme-toggle" id="themeToggle">
+                <i class="fas fa-moon"></i>
+            </button>
+        </header>
+
+        <!-- Main Dashboard -->
+        <main>
+            <div class="dashboard">
+                <!-- Schedule Section -->
+                <div class="card schedule-container">
+                    <div class="card-header">
+                        <h2 class="card-title">
+                            <i class="fas fa-calendar-alt"></i>
+                            Schedule
+                        </h2>
+                        <div style="display: flex; gap: 10px; align-items: center;">
+                            <div class="schedule-switcher">
+                                <button class="schedule-btn active" id="weekBtn">Week View</button>
+                                <button class="schedule-btn" id="monthBtn">Month View</button>
+                            </div>
+                            <button class="btn btn-primary" id="addEventBtn" style="white-space: nowrap;">
+                                <i class="fas fa-plus"></i> Add Event
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="schedule-display">
+                        <!-- Week View -->
+                        <div class="week-view" id="weekView">
+                            <!-- Days will be populated by JavaScript -->
+                        </div>
+                        
+                        <!-- Month View -->
+                        <div class="month-view" id="monthView">
+                            <!-- Month calendar will be populated by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Notes Section -->
+                <div class="card notes-container">
+                    <div class="card-header">
+                        <h2 class="card-title">
+                            <i class="fas fa-sticky-note"></i>
+                            Notes
+                        </h2>
+                        <div class="note-actions">
+                            <button class="btn btn-secondary" id="addNoteBtn">
+                                <i class="fas fa-plus"></i> Add Note
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="notes-controls">
+                        <div>
+                            <button class="btn btn-secondary" id="filterNotesBtn">
+                                <i class="fas fa-filter"></i> Filter
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="notes-grid" id="notesGrid">
+                        <!-- Notes will be populated by JavaScript -->
+                    </div>
+                </div>
+                
+                <!-- Assignments Section -->
+                <div class="card assignments-container">
+                    <div class="card-header">
+                        <h2 class="card-title">
+                            <i class="fas fa-tasks"></i>
+                            Assignment Deadlines
+                        </h2>
+                        <button class="btn btn-primary" id="addAssignmentBtn">
+                            <i class="fas fa-plus"></i> Add Assignment
+                        </button>
+                    </div>
+                    
+                    <div class="assignments-list" id="assignmentsList">
+                        <!-- Assignments will be populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </main>
+        
+        <!-- Footer -->
+        <footer>
+            <p><i class="fas fa-laptop-code"></i> By: Varium</p>
+        </footer>
+    </div>
+    <!-- Add Note Modal -->
+<div class="modal" id="noteModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 class="modal-title">Add New Note</h3>
+            <button class="close-modal" id="closeNoteModal">&times;</button>
+        </div>
+        <form id="noteForm">
+            <div class="form-group">
+                <label for="noteTitle">Note Title</label>
+                <input type="text" id="noteTitle" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="noteContent">Note Content</label>
+                <textarea id="noteContent" class="form-control" required></textarea>
+            </div>
+            <div class="form-group">
+                <label>Link to another note (optional)</label>
+                <select id="noteLink" class="form-control">
+                    <option value="">None</option>
+                    <option value="1">Algorithms Notes</option>
+                    <option value="2">Database Design</option>
+                    <option value="3">Networking Concepts</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Select Color</label>
+                <div class="note-color-selector">
+                    <div class="color-option active" style="background-color: #7c3aed;" data-color="#7c3aed"></div>
+                    <div class="color-option" style="background-color: #10b981;" data-color="#10b981"></div>
+                    <div class="color-option" style="background-color: #3b82f6;" data-color="#3b82f6"></div>
+                    <div class="color-option" style="background-color: #f59e0b;" data-color="#f59e0b"></div>
+                    <div class="color-option" style="background-color: #ef4444;" data-color="#ef4444"></div>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary" style="width: 100%;">
+                <i class="fas fa-save"></i> Save Note
+            </button>
+        </form>
+    </div>
+</div>
+
+<!-- Add Assignment Modal -->
+<div class="modal" id="assignmentModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 class="modal-title">Add New Assignment</h3>
+            <button class="close-modal" id="closeAssignmentModal">&times;</button>
+        </div>
+        <form id="assignmentForm">
+            <div class="form-group">
+                <label for="assignmentTitle">Assignment Title</label>
+                <input type="text" id="assignmentTitle" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="assignmentCourse">Course</label>
+                <input type="text" id="assignmentCourse" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="assignmentDue">Due Date</label>
+                <input type="date" id="assignmentDue" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="assignmentPriority">Priority</label>
+                <select id="assignmentPriority" class="form-control">
+                    <option value="normal">Normal</option>
+                    <option value="high">High</option>
+                    <option value="urgent">Urgent</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary" style="width: 100%;">
+                <i class="fas fa-save"></i> Save Assignment
+            </button>
+        </form>
+    </div>
+</div>
+
+<!-- Add Event Modal -->
+<div class="modal" id="eventModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 class="modal-title">Add Event to Schedule</h3>
+            <button class="close-modal" id="closeEventModal">&times;</button>
+        </div>
+        <form id="eventForm">
+            <div class="form-group">
+                <label for="eventTitle">Event Title</label>
+                <input type="text" id="eventTitle" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="eventDay">Day</label>
+                <select id="eventDay" class="form-control" required>
+                    <option value="Mon">Monday</option>
+                    <option value="Tue">Tuesday</option>
+                    <option value="Wed">Wednesday</option>
+                    <option value="Thu">Thursday</option>
+                    <option value="Fri">Friday</option>
+                    <option value="Sat">Saturday</option>
+                    <option value="Sun">Sunday</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="eventTime">Time</label>
+                <input type="time" id="eventTime" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="eventDuration">Duration</label>
+                <select id="eventDuration" class="form-control" required>
+                    <option value="30m">30 minutes</option>
+                    <option value="1h">1 hour</option>
+                    <option value="1.5h">1.5 hours</option>
+                    <option value="2h" selected>2 hours</option>
+                    <option value="3h">3 hours</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="eventLocation">Location</label>
+                <input type="text" id="eventLocation" class="form-control" placeholder="e.g., CS-201, Library" required>
+            </div>
+            <div class="form-group">
+                <label for="eventType">Event Type</label>
+                <select id="eventType" class="form-control" required>
+                    <option value="class">Class</option>
+                    <option value="lab">Lab</option>
+                    <option value="study">Study Session</option>
+                    <option value="meeting">Meeting</option>
+                    <option value="exam">Exam</option>
+                    <option value="other">Other</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary" style="width: 100%;">
+                <i class="fas fa-calendar-plus"></i> Add Event
+            </button>
+        </form>
+    </div>
+</div>
+
+<script>
+    // Sample data with localStorage fallback
+    let notes = JSON.parse(localStorage.getItem('studentNotes')) || [
+        {
+            id: 1,
+            title: "Algorithms Notes",
+            content: "Time complexity of quicksort is O(n log n) on average, but O(n²) in worst case.",
+            color: "#7c3aed",
+            linkedTo: "",
+            date: new Date().toISOString().split('T')[0]
+        },
+        {
+            id: 2,
+            title: "Database Design",
+            content: "Third normal form (3NF) ensures no transitive dependencies exist.",
+            color: "#10b981",
+            linkedTo: "",
+            date: new Date().toISOString().split('T')[0]
+        },
+        {
+            id: 3,
+            title: "Networking Concepts",
+            content: "TCP vs UDP: TCP is connection-oriented, UDP is connectionless.",
+            color: "#3b82f6",
+            linkedTo: "1",
+            date: new Date().toISOString().split('T')[0]
+        }
+    ];
+
+    let assignments = JSON.parse(localStorage.getItem('studentAssignments')) || [
+        {
+            id: 1,
+            title: "Algorithm Analysis Report",
+            course: "Data Structures",
+            dueDate: new Date(Date.now() + 86400000 * 5).toISOString().split('T')[0],
+            priority: "high",
+            completed: false
+        },
+        {
+            id: 2,
+            title: "Database Schema Design",
+            course: "Database Systems",
+            dueDate: new Date(Date.now() + 86400000 * 10).toISOString().split('T')[0],
+            priority: "normal",
+            completed: false
+        },
+        {
+            id: 3,
+            title: "Network Simulation Project",
+            course: "Computer Networks",
+            dueDate: new Date(Date.now() + 86400000 * 3).toISOString().split('T')[0],
+            priority: "urgent",
+            completed: false
+        }
+    ];
+
+    let events = JSON.parse(localStorage.getItem('studentEvents')) || [
+        {
+            id: 1,
+            day: "Mon",
+            time: "9:00 AM",
+            title: "Data Structures",
+            location: "CS-201",
+            duration: "2h",
+            type: "class"
+        },
+        {
+            id: 2,
+            day: "Mon",
+            time: "11:00 AM",
+            title: "Calculus II",
+            location: "MATH-102",
+            duration: "1.5h",
+            type: "class"
+        },
+        {
+            id: 3,
+            day: "Tue",
+            time: "10:00 AM",
+            title: "Computer Networks",
+            location: "CS-305",
+            duration: "2h",
+            type: "class"
+        }
+    ];
+
+    // ID counters
+    let currentNoteId = notes.length > 0 ? Math.max(...notes.map(n => n.id)) + 1 : 4;
+    let currentAssignmentId = assignments.length > 0 ? Math.max(...assignments.map(a => a.id)) + 1 : 4;
+    let currentEventId = events.length > 0 ? Math.max(...events.map(e => e.id)) + 1 : 4;
+
+    // DOM elements
+    const weekBtn = document.getElementById('weekBtn');
+    const monthBtn = document.getElementById('monthBtn');
+    const weekView = document.getElementById('weekView');
+    const monthView = document.getElementById('monthView');
+    const notesGrid = document.getElementById('notesGrid');
+    const assignmentsList = document.getElementById('assignmentsList');
+    const noteModal = document.getElementById('noteModal');
+    const assignmentModal = document.getElementById('assignmentModal');
+    const eventModal = document.getElementById('eventModal');
+    const addNoteBtn = document.getElementById('addNoteBtn');
+    const addAssignmentBtn = document.getElementById('addAssignmentBtn');
+    const addEventBtn = document.getElementById('addEventBtn');
+    const closeNoteModal = document.getElementById('closeNoteModal');
+    const closeAssignmentModal = document.getElementById('closeAssignmentModal');
+    const closeEventModal = document.getElementById('closeEventModal');
+    const noteForm = document.getElementById('noteForm');
+    const assignmentForm = document.getElementById('assignmentForm');
+    const eventForm = document.getElementById('eventForm');
+    const themeToggle = document.getElementById('themeToggle');
+    const colorOptions = document.querySelectorAll('.color-option');
+    const filterNotesBtn = document.getElementById('filterNotesBtn');
+    // Initialize application
+document.addEventListener('DOMContentLoaded', function() {
+    initializeSchedule();
+    renderNotes();
+    renderAssignments();
+    setupEventListeners();
+});
+
+// Setup event listeners
+function setupEventListeners() {
+    // Schedule view switcher
+    weekBtn.addEventListener('click', function() {
+        weekBtn.classList.add('active');
+        monthBtn.classList.remove('active');
+        weekView.style.display = 'grid';
+        monthView.style.display = 'none';
+    });
+
+    monthBtn.addEventListener('click', function() {
+        monthBtn.classList.add('active');
+        weekBtn.classList.remove('active');
+        weekView.style.display = 'none';
+        monthView.style.display = 'grid';
+    });
+
+    // Modal controls
+    addNoteBtn.addEventListener('click', () => {
+        noteModal.style.display = 'flex';
+        document.getElementById('noteTitle').focus();
+    });
+    
+    addAssignmentBtn.addEventListener('click', () => {
+        const tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        document.getElementById('assignmentDue').valueAsDate = tomorrow;
+        assignmentModal.style.display = 'flex';
+        document.getElementById('assignmentTitle').focus();
+    });
+    
+    addEventBtn.addEventListener('click', () => {
+        const now = new Date();
+        const hours = now.getHours().toString().padStart(2, '0');
+        const minutes = now.getMinutes().toString().padStart(2, '0');
+        document.getElementById('eventTime').value = `${hours}:${minutes}`;
+        eventModal.style.display = 'flex';
+        document.getElementById('eventTitle').focus();
+    });
+    
+    closeNoteModal.addEventListener('click', () => noteModal.style.display = 'none');
+    closeAssignmentModal.addEventListener('click', () => assignmentModal.style.display = 'none');
+    closeEventModal.addEventListener('click', () => eventModal.style.display = 'none');
+    
+    // Close modal when clicking outside
+    window.addEventListener('click', (e) => {
+        if (e.target === noteModal) noteModal.style.display = 'none';
+        if (e.target === assignmentModal) assignmentModal.style.display = 'none';
+        if (e.target === eventModal) eventModal.style.display = 'none';
+    });
+
+    // Close modal with Escape key
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            noteModal.style.display = 'none';
+            assignmentModal.style.display = 'none';
+            eventModal.style.display = 'none';
+        }
+    });
+
+    // Form submissions
+    noteForm.addEventListener('submit', handleNoteSubmit);
+    assignmentForm.addEventListener('submit', handleAssignmentSubmit);
+    eventForm.addEventListener('submit', handleEventSubmit);
+
+    // Theme toggle
+    themeToggle.addEventListener('click', toggleTheme);
+
+    // Color selector for notes
+    colorOptions.forEach(option => {
+        option.addEventListener('click', function() {
+            colorOptions.forEach(opt => opt.classList.remove('active'));
+            this.classList.add('active');
+        });
+    });
+
+    // Filter notes button
+    filterNotesBtn.addEventListener('click', showFilterOptions);
+}
+
+// Initialize schedule views
+function initializeSchedule() {
+    // Week view
+    const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+    const today = new Date();
+    const todayIndex = today.getDay() === 0 ? 6 : today.getDay() - 1;
+    
+    weekView.innerHTML = '';
+    
+    days.forEach((day, index) => {
+        const dayColumn = document.createElement('div');
+        dayColumn.className = 'day-column';
+        dayColumn.dataset.day = day;
+        
+        const dayHeader = document.createElement('div');
+        dayHeader.className = `day-header ${index === todayIndex ? 'day-today' : ''}`;
+        dayHeader.textContent = day;
+        
+        // Add date number
+        const dateNum = document.createElement('div');
+        dateNum.style.fontSize = '12px';
+        dateNum.style.opacity = '0.7';
+        dateNum.textContent = getDateForDay(index - todayIndex);
+        dayHeader.appendChild(dateNum);
+        
+        dayColumn.appendChild(dayHeader);
+        
+        // Get events for this day
+        const dayEvents = events.filter(event => event.day === day);
+        
+        if (dayEvents.length === 0) {
+            const noEvent = document.createElement('div');
+            noEvent.className = 'no-event';
+            noEvent.style.textAlign = 'center';
+            noEvent.style.padding = '20px 0';
+            noEvent.style.color = 'var(--text-secondary)';
+            noEvent.style.fontSize = '14px';
+            noEvent.innerHTML = '<i class="far fa-calendar-plus"></i><br>No events';
+            dayColumn.appendChild(noEvent);
+        } else {
+            // Sort events by time
+            dayEvents.sort((a, b) => {
+                const timeA = convertTimeTo24(a.time);
+                const timeB = convertTimeTo24(b.time);
+                return timeA - timeB;
+            });
+            
+            dayEvents.forEach(event => {
+                const eventItem = document.createElement('div');
+                eventItem.className = `event-item event-${event.type}`;
+                eventItem.dataset.eventId = event.id;
+                
+                eventItem.innerHTML = `
+                    <strong>${event.title}</strong>
+                    <div><i class="far fa-clock"></i> ${event.time} (${event.duration})</div>
+                    <div><i class="fas fa-map-marker-alt"></i> ${event.location}</div>
+                    <button class="event-delete-btn" title="Delete event">
+                        <i class="fas fa-times"></i>
+                    </button>
+                `;
+                dayColumn.appendChild(eventItem);
+            });
+        }
+        
+        // Add drop zone for new events
+        const dropZone = document.createElement('div');
+        dropZone.className = 'drop-zone';
+        dropZone.innerHTML = '<i class="fas fa-plus"></i> Add event to ' + day;
+        dropZone.addEventListener('click', () => {
+            document.getElementById('eventDay').value = day;
+            eventModal.style.display = 'flex';
+        });
+        
+        dayColumn.appendChild(dropZone);
+        weekView.appendChild(dayColumn);
+    });
+
+    // Month view
+    updateMonthView();
+}
+
+// Helper function to get date for a day relative to today
+function getDateForDay(offset) {
+    const date = new Date();
+    date.setDate(date.getDate() + offset);
+    return date.getDate();
+}
+
+// Convert time to 24-hour format for sorting
+function convertTimeTo24(timeStr) {
+    const [time, modifier] = timeStr.split(' ');
+    let [hours, minutes] = time.split(':');
+    
+    if (modifier === 'PM' && hours !== '12') {
+        hours = parseInt(hours) + 12;
+    }
+    if (modifier === 'AM' && hours === '12') {
+        hours = '00';
+    }
+    
+    return parseInt(hours) * 60 + parseInt(minutes);
+}
+
+// Update month view with events
+function updateMonthView() {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = today.getMonth();
+    const firstDay = new Date(year, month, 1);
+    const lastDay = new Date(year, month + 1, 0);
+    const daysInMonth = lastDay.getDate();
+    const startingDay = firstDay.getDay();
+    
+    monthView.innerHTML = '';
+    
+    // Create month header (days of week)
+    const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+    days.forEach(day => {
+        const dayHeader = document.createElement('div');
+        dayHeader.className = 'month-cell-header';
+        dayHeader.textContent = day.substring(0, 2);
+        monthView.appendChild(dayHeader);
+    });
+    
+    // Add empty cells for days before the first day of month
+    for (let i = 0; i < (startingDay === 0 ? 6 : startingDay - 1); i++) {
+        const emptyCell = document.createElement('div');
+        emptyCell.className = 'month-cell';
+        emptyCell.style.opacity = '0.3';
+        monthView.appendChild(emptyCell);
+    }
+    
+    // Create month cells
+    for (let i = 1; i <= daysInMonth; i++) {
+        const cell = document.createElement('div');
+        cell.className = `month-cell ${i === today.getDate() ? 'month-cell-today' : ''}`;
+        
+        const cellHeader = document.createElement('div');
+        cellHeader.className = 'month-cell-header';
+        cellHeader.textContent = i;
+        cell.appendChild(cellHeader);
+        
+        // Get day of week for this date
+        const date = new Date(year, month, i);
+        const dayIndex = date.getDay();
+        const dayOfWeek = days[dayIndex === 0 ? 6 : dayIndex - 1];
+        
+        // Get events for this day
+        const dayEvents = events.filter(event => event.day === dayOfWeek);
+        
+        // Add events to month cell (limit to 3 for display)
+        dayEvents.slice(0, 3).forEach(event => {
+            const eventDot = document.createElement('div');
+            eventDot.className = `month-event event-${event.type}`;
+            eventDot.textContent = event.title.substring(0, 12) + (event.title.length > 12 ? '...' : '');
+            eventDot.title = `${event.title} (${event.time}, ${event.location})`;
+            eventDot.dataset.eventId = event.id;
+            
+            // Add delete button
+            const deleteBtn = document.createElement('button');
+            deleteBtn.className = 'month-event-delete';
+            deleteBtn.innerHTML = '<i class="fas fa-times"></i>';
+            deleteBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                deleteEvent(event.id);
+            });
+            
+            eventDot.appendChild(deleteBtn);
+            cell.appendChild(eventDot);
+        });
+        
+        // Show count if more events
+        if (dayEvents.length > 3) {
+            const moreEvents = document.createElement('div');
+            moreEvents.className = 'month-event';
+            moreEvents.style.backgroundColor = 'var(--border-color)';
+            moreEvents.textContent = `+${dayEvents.length - 3} more`;
+            cell.appendChild(moreEvents);
+        }
+        
+        // Add click to add event
+        cell.addEventListener('click', () => {
+            const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+            const date = new Date(year, month, i);
+            const dayName = daysOfWeek[date.getDay()];
+            document.getElementById('eventDay').value = dayName;
+            eventModal.style.display = 'flex';
+        });
+        
+        monthView.appendChild(cell);
+    }
+}
+
+// Delete event function
+function deleteEvent(eventId) {
+    if (confirm('Are you sure you want to delete this event?')) {
+        const index = events.findIndex(e => e.id === eventId);
+        if (index !== -1) {
+            events.splice(index, 1);
+            saveEvents();
+            initializeSchedule();
+            showNotification('Event deleted successfully!', 'success');
+        }
+    }
+}
+// Render notes
+function renderNotes() {
+    notesGrid.innerHTML = '';
+    
+    if (notes.length === 0) {
+        const emptyState = document.createElement('div');
+        emptyState.style.textAlign = 'center';
+        emptyState.style.padding = '40px 20px';
+        emptyState.style.gridColumn = '1 / -1';
+        emptyState.innerHTML = `
+            <i class="far fa-sticky-note" style="font-size: 48px; color: var(--text-secondary); margin-bottom: 16px;"></i>
+            <h3 style="margin-bottom: 8px;">No notes yet</h3>
+            <p style="color: var(--text-secondary); margin-bottom: 20px;">Create your first note to get started</p>
+            <button class="btn btn-primary" id="createFirstNote">
+                <i class="fas fa-plus"></i> Create Note
+            </button>
+        `;
+        notesGrid.appendChild(emptyState);
+        
+        document.getElementById('createFirstNote').addEventListener('click', () => {
+            noteModal.style.display = 'flex';
+        });
+        return;
+    }
+    
+    notes.forEach(note => {
+        const noteElement = createNoteElement(note);
+        notesGrid.appendChild(noteElement);
+    });
+}
+
+// Create a note element
+function createNoteElement(note) {
+    const noteDiv = document.createElement('div');
+    noteDiv.className = 'note';
+    noteDiv.style.borderLeftColor = note.color;
+    noteDiv.dataset.noteId = note.id;
+    
+    // Get linked note title if exists
+    let linkedTitle = '';
+    if (note.linkedTo) {
+        const linkedNote = notes.find(n => n.id == note.linkedTo);
+        linkedTitle = linkedNote ? linkedNote.title : '';
+    }
+    
+    noteDiv.innerHTML = `
+        <div class="note-header">
+            <h3 class="note-title">${note.title}</h3>
+            <div class="note-link-dropdown">
+                <button class="link-btn">
+                    <i class="fas fa-link"></i> ${note.linkedTo ? 'Linked' : 'Link Note'}
+                </button>
+                <div class="dropdown-content">
+                    <div class="dropdown-header">Link to:</div>
+                    ${notes.filter(n => n.id !== note.id).map(n => 
+                        `<div class="dropdown-item" data-action="link" data-target="${n.id}">${n.title}</div>`
+                    ).join('')}
+                    ${note.linkedTo ? '<div class="dropdown-item" data-action="unlink">Remove Link</div>' : ''}
+                </div>
+            </div>
+        </div>
+        <div class="note-content">${note.content}</div>
+        ${linkedTitle ? `<div class="note-link"><i class="fas fa-paperclip"></i> Linked to: ${linkedTitle}</div>` : ''}
+        <div class="note-color-selector">
+            <div class="color-option ${note.color === '#7c3aed' ? 'active' : ''}" style="background-color: #7c3aed;" data-color="#7c3aed"></div>
+            <div class="color-option ${note.color === '#10b981' ? 'active' : ''}" style="background-color: #10b981;" data-color="#10b981"></div>
+            <div class="color-option ${note.color === '#3b82f6' ? 'active' : ''}" style="background-color: #3b82f6;" data-color="#3b82f6"></div>
+            <div class="color-option ${note.color === '#f59e0b' ? 'active' : ''}" style="background-color: #f59e0b;" data-color="#f59e0b"></div>
+            <div class="color-option ${note.color === '#ef4444' ? 'active' : ''}" style="background-color: #ef4444;" data-color="#ef4444"></div>
+        </div>
+        <div style="display: flex; justify-content: space-between; margin-top: 15px;">
+            <div style="font-size: 12px; color: var(--text-secondary);">
+                <i class="far fa-calendar"></i> ${note.date}
+            </div>
+            <button class="action-btn delete-note-btn" title="Delete note">
+                <i class="fas fa-trash"></i>
+            </button>
+        </div>
+    `;
+    
+    return noteDiv;
+}
+
+// Render assignments
+function renderAssignments() {
+    assignmentsList.innerHTML = '';
+    
+    // Sort assignments by due date (closest first) and priority
+    const sortedAssignments = [...assignments].sort((a, b) => {
+        const dateA = new Date(a.dueDate);
+        const dateB = new Date(b.dueDate);
+        
+        // If same date, sort by priority
+        if (dateA.getTime() === dateB.getTime()) {
+            const priorityOrder = { urgent: 0, high: 1, normal: 2 };
+            return priorityOrder[a.priority] - priorityOrder[b.priority];
+        }
+        
+        return dateA - dateB;
+    });
+    
+    if (sortedAssignments.length === 0) {
+        const emptyState = document.createElement('div');
+        emptyState.style.textAlign = 'center';
+        emptyState.style.padding = '40px 20px';
+        emptyState.innerHTML = `
+            <i class="far fa-clipboard" style="font-size: 48px; color: var(--text-secondary); margin-bottom: 16px;"></i>
+            <h3 style="margin-bottom: 8px;">No assignments yet</h3>
+            <p style="color: var(--text-secondary);">Add your first assignment deadline</p>
+        `;
+        assignmentsList.appendChild(emptyState);
+        return;
+    }
+    
+    sortedAssignments.forEach(assignment => {
+        const assignmentElement = createAssignmentElement(assignment);
+        assignmentsList.appendChild(assignmentElement);
+    });
+    
+    // Update assignment count in header
+    const urgentCount = assignments.filter(a => a.priority === 'urgent' && !a.completed).length;
+    const totalCount = assignments.filter(a => !a.completed).length;
+    
+    const assignmentTitle = document.querySelector('.assignments-container .card-title');
+    assignmentTitle.innerHTML = `
+        <i class="fas fa-tasks"></i>
+        Assignment Deadlines
+        ${totalCount > 0 ? `<span style="font-size: 14px; margin-left: 8px; color: ${urgentCount > 0 ? 'var(--danger)' : 'var(--warning)'}">(${totalCount} pending, ${urgentCount} urgent)</span>` : ''}
+    `;
+}
+
+// Create an assignment element
+function createAssignmentElement(assignment) {
+    const assignmentDiv = document.createElement('div');
+    assignmentDiv.className = `assignment-item ${assignment.priority} ${assignment.completed ? 'completed' : ''}`;
+    assignmentDiv.dataset.assignmentId = assignment.id;
+    
+    // Format due date
+    const dueDate = new Date(assignment.dueDate);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const timeDiff = dueDate.getTime() - today.getTime();
+    const daysDiff = Math.ceil(timeDiff / (1000 * 3600 * 24));
+    
+    let dueText = '';
+    let isOverdue = false;
+    let isToday = false;
+    
+    if (daysDiff < 0) {
+        dueText = `${Math.abs(daysDiff)} day${Math.abs(daysDiff) === 1 ? '' : 's'} overdue`;
+        isOverdue = true;
+    } else if (daysDiff === 0) {
+        dueText = 'Due today';
+        isToday = true;
+    } else if (daysDiff === 1) {
+        dueText = 'Due tomorrow';
+    } else if (daysDiff <= 7) {
+        dueText = `Due in ${daysDiff} days`;
+    } else {
+        dueText = dueDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    }
+    
+    const priorityIcons = {
+        urgent: 'fas fa-exclamation-circle',
+        high: 'fas fa-exclamation-triangle',
+        normal: 'fas fa-flag'
+    };
+    
+    assignmentDiv.innerHTML = `
+        <div class="assignment-info">
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+                <h4>${assignment.title}</h4>
+                <i class="${priorityIcons[assignment.priority]}" style="color: ${assignment.priority === 'urgent' ? 'var(--danger)' : assignment.priority === 'high' ? 'var(--warning)' : 'var(--secondary)'}"></i>
+            </div>
+            <p><i class="fas fa-book"></i> ${assignment.course}</p>
+        </div>
+        <div class="assignment-due ${isOverdue ? 'urgent' : ''} ${isToday ? 'today' : ''}">
+            <i class="far fa-calendar-alt"></i>
+            <span>${dueText}</span>
+        </div>
+        <div class="assignment-actions">
+            <button class="action-btn complete-btn" title="${assignment.completed ? 'Mark as incomplete' : 'Mark as complete'}">
+                <i class="fas fa-${assignment.completed ? 'undo' : 'check'}"></i>
+            </button>
+            <button class="action-btn delete-btn" title="Delete assignment">
+                <i class="fas fa-trash"></i>
+            </button>
+        </div>
+    `;
+    
+    return assignmentDiv;
+}
+
+// Handle note form submission
+function handleNoteSubmit(e) {
+    e.preventDefault();
+    
+    const title = document.getElementById('noteTitle').value;
+    const content = document.getElementById('noteContent').value;
+    const link = document.getElementById('noteLink').value;
+    const activeColor = document.querySelector('.color-option.active').getAttribute('data-color');
+    
+    // Create new note
+    const newNote = {
+        id: currentNoteId++,
+        title,
+        content,
+        color: activeColor,
+        linkedTo: link || null,
+        date: new Date().toISOString().split('T')[0]
+    };
+    
+    notes.push(newNote);
+    saveNotes();
+    renderNotes();
+    noteModal.style.display = 'none';
+    noteForm.reset();
+    
+    // Reset color selector
+    colorOptions.forEach(opt => opt.classList.remove('active'));
+    colorOptions[0].classList.add('active');
+    
+    showNotification('Note created successfully!', 'success');
+}
+        // Handle assignment form submission
+        function handleAssignmentSubmit(e) {
+            e.preventDefault();
+            
+            const title = document.getElementById('assignmentTitle').value;
+            const course = document.getElementById('assignmentCourse').value;
+            const due = document.getElementById('assignmentDue').value;
+            const priority = document.getElementById('assignmentPriority').value;
+            
+            // Create new assignment
+            const newAssignment = {
+                id: currentAssignmentId++,
+                title,
+                course,
+                dueDate: due,
+                priority,
+                completed: false
+            };
+            
+            assignments.push(newAssignment);
+            saveAssignments();
+            renderAssignments();
+            assignmentModal.style.display = 'none';
+            assignmentForm.reset();
+            
+            showNotification('Assignment added successfully!', 'success');
+        }
+
+        // Handle event form submission
+        function handleEventSubmit(e) {
+            e.preventDefault();
+            
+            const title = document.getElementById('eventTitle').value;
+            const day = document.getElementById('eventDay').value;
+            const timeInput = document.getElementById('eventTime').value;
+            const duration = document.getElementById('eventDuration').value;
+            const location = document.getElementById('eventLocation').value;
+            const type = document.getElementById('eventType').value;
+            
+            // Convert 24h time to 12h format
+            const [hours, minutes] = timeInput.split(':');
+            let hour = parseInt(hours);
+            const ampm = hour >= 12 ? 'PM' : 'AM';
+            hour = hour % 12;
+            hour = hour ? hour : 12;
+            const time = `${hour}:${minutes} ${ampm}`;
+            
+            // Create new event
+            const newEvent = {
+                id: currentEventId++,
+                title,
+                day,
+                time,
+                duration,
+                location,
+                type
+            };
+            
+            events.push(newEvent);
+            saveEvents();
+            initializeSchedule();
+            eventModal.style.display = 'none';
+            eventForm.reset();
+            
+            showNotification('Event added to schedule!', 'success');
+        }
+
+        // Save data to localStorage
+        function saveNotes() {
+            localStorage.setItem('studentNotes', JSON.stringify(notes));
+            localStorage.setItem('currentNoteId', currentNoteId.toString());
+        }
+
+        function saveAssignments() {
+            localStorage.setItem('studentAssignments', JSON.stringify(assignments));
+            localStorage.setItem('currentAssignmentId', currentAssignmentId.toString());
+        }
+
+        function saveEvents() {
+            localStorage.setItem('studentEvents', JSON.stringify(events));
+            localStorage.setItem('currentEventId', currentEventId.toString());
+        }
+
+        // Toggle theme
+        function toggleTheme() {
+            const icon = themeToggle.querySelector('i');
+            if (icon.classList.contains('fa-moon')) {
+                icon.classList.remove('fa-moon');
+                icon.classList.add('fa-sun');
+                showNotification('Light mode would be implemented here. Currently in dark mode only.', 'info');
+            } else {
+                icon.classList.remove('fa-sun');
+                icon.classList.add('fa-moon');
+            }
+        }
+
+        // Show filter options for notes
+        function showFilterOptions() {
+            // Create filter modal
+            const filterModal = document.createElement('div');
+            filterModal.className = 'modal';
+            filterModal.style.display = 'flex';
+            filterModal.innerHTML = `
+                <div class="modal-content" style="max-width: 400px;">
+                    <div class="modal-header">
+                        <h3 class="modal-title">Filter Notes</h3>
+                        <button class="close-modal" id="closeFilterModal">&times;</button>
+                    </div>
+                    <div style="padding: 20px;">
+                        <div class="form-group">
+                            <label>Filter by color</label>
+                            <div class="note-color-selector" style="justify-content: center;">
+                                <div class="color-option" style="background-color: #7c3aed;" data-color="#7c3aed"></div>
+                                <div class="color-option" style="background-color: #10b981;" data-color="#10b981"></div>
+                                <div class="color-option" style="background-color: #3b82f6;" data-color="#3b82f6"></div>
+                                <div class="color-option" style="background-color: #f59e0b;" data-color="#f59e0b"></div>
+                                <div class="color-option" style="background-color: #ef4444;" data-color="#ef4444"></div>
+                                <div class="color-option" style="background-color: transparent; border: 2px solid var(--text-secondary);" data-color="all">All</div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Filter by date</label>
+                            <select class="form-control" id="dateFilter">
+                                <option value="all">All dates</option>
+                                <option value="today">Today</option>
+                                <option value="week">This week</option>
+                                <option value="month">This month</option>
+                            </select>
+                        </div>
+                        <button class="btn btn-primary" style="width: 100%; margin-top: 20px;" id="applyFilter">
+                            Apply Filter
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(filterModal);
+            
+            // Close filter modal
+            document.getElementById('closeFilterModal').addEventListener('click', () => {
+                document.body.removeChild(filterModal);
+            });
+            
+            // Close when clicking outside
+            filterModal.addEventListener('click', (e) => {
+                if (e.target === filterModal) {
+                    document.body.removeChild(filterModal);
+                }
+            });
+            
+            // Apply filter
+            document.getElementById('applyFilter').addEventListener('click', () => {
+                document.body.removeChild(filterModal);
+                showNotification('Filter applied!', 'success');
+            });
+        }
+
+        // Show notification
+        function showNotification(message, type) {
+            // Remove existing notification
+            const existingNotification = document.querySelector('.notification');
+            if (existingNotification) {
+                existingNotification.remove();
+            }
+            
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            
+            notification.innerHTML = `
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <i class="fas fa-${type === 'success' ? 'check-circle' : 'info-circle'}"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // Auto remove after 3 seconds
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.style.animation = 'slideOut 0.3s ease';
+                    setTimeout(() => {
+                        if (notification.parentNode) {
+                            notification.remove();
+                        }
+                    }, 300);
+                }
+            }, 3000);
+        }
+
+        // Add click listeners for interactive elements
+        document.addEventListener('click', function(e) {
+            // Handle assignment completion
+            if (e.target.closest('.complete-btn')) {
+                const assignmentItem = e.target.closest('.assignment-item');
+                const assignmentId = parseInt(assignmentItem.dataset.assignmentId);
+                
+                const assignment = assignments.find(a => a.id === assignmentId);
+                if (assignment) {
+                    assignment.completed = !assignment.completed;
+                    saveAssignments();
+                    renderAssignments();
+                    
+                    showNotification(
+                        assignment.completed 
+                            ? `Assignment "${assignment.title}" marked as complete!` 
+                            : `Assignment "${assignment.title}" marked as incomplete.`,
+                        'success'
+                    );
+                }
+            }
+            
+            // Handle assignment deletion
+            if (e.target.closest('.delete-btn')) {
+                const assignmentItem = e.target.closest('.assignment-item');
+                const assignmentId = parseInt(assignmentItem.dataset.assignmentId);
+                
+                const assignment = assignments.find(a => a.id === assignmentId);
+                if (assignment && confirm(`Delete assignment "${assignment.title}"?`)) {
+                    const index = assignments.findIndex(a => a.id === assignmentId);
+                    if (index !== -1) {
+                        assignments.splice(index, 1);
+                        saveAssignments();
+                        renderAssignments();
+                        showNotification('Assignment deleted!', 'success');
+                    }
+                }
+            }
+            
+            // Handle note deletion
+            if (e.target.closest('.delete-note-btn')) {
+                const noteElement = e.target.closest('.note');
+                const noteId = parseInt(noteElement.dataset.noteId);
+                
+                const note = notes.find(n => n.id === noteId);
+                if (note && confirm(`Delete note "${note.title}"?`)) {
+                    const index = notes.findIndex(n => n.id === noteId);
+                    if (index !== -1) {
+                        notes.splice(index, 1);
+                        saveNotes();
+                        renderNotes();
+                        showNotification('Note deleted!', 'success');
+                    }
+                }
+            }
+            
+            // Handle event deletion from week view
+            if (e.target.closest('.event-delete-btn')) {
+                const eventItem = e.target.closest('.event-item');
+                const eventId = parseInt(eventItem.dataset.eventId);
+                deleteEvent(eventId);
+            }
+            
+            // Handle note color change
+            if (e.target.classList.contains('color-option') && e.target.closest('.note')) {
+                const color = e.target.getAttribute('data-color');
+                const noteElement = e.target.closest('.note');
+                const noteId = parseInt(noteElement.dataset.noteId);
+                
+                const note = notes.find(n => n.id === noteId);
+                if (note) {
+                    note.color = color;
+                    saveNotes();
+                    renderNotes();
+                    showNotification('Note color updated!', 'success');
+                }
+            }
+            
+            // Handle note linking
+            if (e.target.classList.contains('dropdown-item')) {
+                const action = e.target.getAttribute('data-action');
+                const targetId = e.target.getAttribute('data-target');
+                const noteElement = e.target.closest('.note');
+                const noteId = parseInt(noteElement.dataset.noteId);
+                
+                const note = notes.find(n => n.id === noteId);
+                if (note) {
+                    if (action === 'link') {
+                        note.linkedTo = targetId;
+                    } else if (action === 'unlink') {
+                        note.linkedTo = null;
+                    }
+                    saveNotes();
+                    renderNotes();
+                }
+            }
+        });
+
+        // Initialize data from localStorage if available
+        const savedNoteId = localStorage.getItem('currentNoteId');
+        const savedAssignmentId = localStorage.getItem('currentAssignmentId');
+        const savedEventId = localStorage.getItem('currentEventId');
+        
+        if (savedNoteId) currentNoteId = parseInt(savedNoteId);
+        if (savedAssignmentId) currentAssignmentId = parseInt(savedAssignmentId);
+        if (savedEventId) currentEventId = parseInt(savedEventId);
+    </script>
+</body>
+</html>
